@@ -1,32 +1,45 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
 #include <sys/socket.h>
 #include <string.h>
 #include <netinet/in.h>
 #include <X11/Xlib.h>
+#include <fcntl.h>
 #include "mouse.h"
+
 void listenOn(int port){
-  int sockfd, messagefd;
+  int serverfd,clientfd;
   struct sockaddr_in server,client;
-  socklen_t len;
-  sockfd=socket(AF_INET,SOCK_STREAM,0);
+  char messageBuffer[4096];
+  serverfd = socket(AF_INET,SOCK_DGRAM,0);
+  if(serverfd < 0){
+    printf("Error creating socket");
+    return;
+  }
+  printf("Created socket\n");
   bzero(&server,sizeof(server));
+  server.sin_addr.s_addr = INADDR_ANY;
   server.sin_family = AF_INET;
-  server.sin_addr.s_addr = htonl(INADDR_ANY);
   server.sin_port = htons(port);
-  bind(sockfd,(struct sockaddr*)&server, sizeof(server));
-  printf("Listening on port %d\n", port);
+  if(bind(serverfd, (struct sockaddr *)&server,sizeof(server)) < 0){
+    printf("Couldn't bind\n");
+    return;
+  }
+  printf("Listening on port %d\n",port);
   for(;;){
-    char messageBuffer[4096];
-    len = sizeof(client);
-    messagefd = recvfrom(sockfd, messageBuffer, 4096,0 , (struct sockaddr*) &client, &len);
-    if(strlen(messageBuffer) > 0){
-      parseMessage(messageBuffer);
-      memset(messageBuffer, 0, sizeof(messageBuffer));
+    clientfd = recv(serverfd,messageBuffer,sizeof(messageBuffer),0);
+    if( clientfd > 0){
+      if(strlen(messageBuffer) > 0){
+        parseMessage(messageBuffer);
+        memset(messageBuffer, 0, sizeof(messageBuffer));
+      }
+    }
+    else{
+      printf("Couldn't recieve. Clientfd was %d\n",clientfd);
     }
   }
 }
-
 void parseMessage(char message[]){
   Display *dpy = XOpenDisplay(0);
   Window rootWindow = XRootWindow(dpy,0);
