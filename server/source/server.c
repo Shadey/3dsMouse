@@ -72,4 +72,5 @@ void parseMessage(char message[]){
   else{
     printf("%s\n",message);
   }
+  XCloseDisplay(dpy);
 }
