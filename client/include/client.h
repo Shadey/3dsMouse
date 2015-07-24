@@ -1,2 +1,2 @@
-void sendData(int port,char commandp[]);
+void sendData(int port,char command[]);
 void parseInput();
