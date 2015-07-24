@@ -1,3 +1,5 @@
 client/build/*
-client.*
+client.3dsx
+client.elf
+client.smdh
 server/server
