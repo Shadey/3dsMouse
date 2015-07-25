@@ -38,4 +38,10 @@ void parseInput(){
   else if((kDown&KEY_DDOWN) != 0){
     sendData(8081,"MOVE DOWN");
   }
+  else if ((kDown&KEY_L) != 0){
+    sendData(8081,"LEFT CLICK");
+  }
+  else if ((kDown&KEY_R) != 0){
+    sendData(8081,"RIGHT CLICK");
+  }
 }
