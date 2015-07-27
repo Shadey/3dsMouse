@@ -9,3 +9,16 @@ I choosen to use UDP over TCP just because of the smaller packet sizes that UDP 
 - Use the circlepad instead of the DPAD
 - Maybe also use touchpad for navigation as well.
 - Port to Windows/Mac
+
+#Build Client
+Use ftbrony or ftpony for quick development. There a small python script that will send over the files over over the host
+
+```
+make
+```
+And thats it, the files should be on your 3ds
+
+#Build server 
+```
+gcc -o server source/*.c -Iinclude -lX11 -lXst
+```
